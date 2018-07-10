@@ -1,32 +1,32 @@
 package com.pnp.controller;
 
-import java.util.Optional;
+import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
+import javassist.NotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.pnp.dao.RoleRepository;
+import com.pnp.dao.UserMeetingRepository;
 import com.pnp.dao.UserRepository;
-import com.pnp.dao.UserRoleRepository;
+import com.pnp.model.Department;
+import com.pnp.model.Project;
 import com.pnp.model.Role;
 import com.pnp.model.User;
-import com.pnp.model.UserRole;
 
-@RestController
+@Controller
 public class UserController {
-	
-	@Autowired
-	UserRoleRepository userRoleRepo;
-	
+
 	@Autowired
 	UserRepository userRepo;
 	
@@ -35,28 +35,64 @@ public class UserController {
 	
 	@Autowired
 	BCryptPasswordEncoder encoder;
+
+	@Autowired
+	UserMeetingRepository userMeetingRepo;
+
 	
-	@PostMapping(value = "/user/add", consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-	public ResponseEntity<User> addUser(
-			@RequestParam String email, @RequestParam(name="user_name") String userName,
-			@RequestParam String password, @RequestParam(name = "role_id", required = false) @Valid @Min(value = 0) String roleId ){
-				
-		//Role role = roleRepo.findOne(new Role);
-		Optional<Role> role = roleRepo.findById(Long.parseLong(roleId));
-
-		User user = new User();
-		user.setUsername(userName);
-		user.setEmail(email);
-		user.setPassword(encoder.encode(password));
-
-		UserRole ur = new UserRole();
-		ur.setRole(role.get());
-		ur.setUser(user);
+	@PostMapping("/user/add") 
+	public ResponseEntity<User> addUser(@RequestBody User user) { 
 		
-		user.getUserRoles().add(ur);
+		user.setPassword(encoder.encode(user.getPassword()));
 		user = userRepo.save(user);
-		
-		return new ResponseEntity<User>(user , HttpStatus.CREATED);
+		return new ResponseEntity<User>(user,HttpStatus.CREATED);
 	}
 	
+	@PutMapping("/user/update") 
+	public ResponseEntity<User> updateUser(@RequestBody User user) throws NotFoundException {
+		
+		if (user.getId() != 0l && user.getId() != null) {
+			user = userRepo.save(user);
+			return new ResponseEntity<User>(user, HttpStatus.OK);
+		} else {
+			throw new NotFoundException("User not found");
+		}
+	}
+	
+	@GetMapping("/user/all")
+	public ResponseEntity<List<User>> getAllUser() {
+		List<User> userList = userRepo.findAll();
+		return new ResponseEntity<List<User>>(userList,HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/user/{id}")
+	public ResponseEntity<User> getSpecificUser(@PathVariable("id") Long id) {
+		User user = userRepo.getOne(id);
+		return new ResponseEntity<User>(user,HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/user/delete/{id}")
+	public ResponseEntity<String> deleteSpecificUser(@PathVariable("id") Long id) {
+		userRepo.deleteById(id);
+		return new ResponseEntity<String>("User deleted successfully",HttpStatus.OK);
+	}
+	
+	@GetMapping("/user/{id}/dept")
+	public ResponseEntity<List<Department>> getUserDepartments(@PathVariable("id") Long id) {
+		List<Department> deptList = userRepo.findDepartmentsByUserId(id);
+		return new ResponseEntity<List<Department>>(deptList,HttpStatus.OK);
+	}
+	
+	@GetMapping("/user/{id}/proj")
+	public ResponseEntity<List<Project>> getUserProjects(@PathVariable("id") Long id) {
+		List<Project> projList = userRepo.findProjectsByUserId(id);
+		return new ResponseEntity<List<Project>>(projList,HttpStatus.OK);
+	}
+	
+	@GetMapping("/user/{id}/role")
+	public ResponseEntity<List<Role>> getUserRoles(@PathVariable("id") Long id) {
+		List<Role> roleList = userRepo.findRolesByUserId(id);
+		return new ResponseEntity<List<Role>>(roleList,HttpStatus.OK);
+	}
+
 }

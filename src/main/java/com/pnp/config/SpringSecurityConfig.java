@@ -35,20 +35,25 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
 	                .authorizeRequests()
 	                .antMatchers("/webjars/**").permitAll()
-	                .antMatchers("/", "/home", "/about").permitAll()
+	                //.antMatchers("/**/*.html", "/**", "/", "/home", "/about").permitAll()
+	                .antMatchers("**/*.html", "/").permitAll()
 	                .antMatchers("admin/**").hasAnyRole("SUPER_ADMIN", "TEAM_ADMIN")
 	                .antMatchers("user/**").hasAnyRole("USER")
+	                .antMatchers("dashboard").authenticated()
 	                .anyRequest().authenticated()
                 .and()
 	                .formLogin()
 	                .loginPage("/login")
-	                //.loginProcessingUrl("/login")
 	                .successForwardUrl("/login-success")
+	                .defaultSuccessUrl("/dashboard", false)
 	                .failureUrl("/login?error=true")
 	                .permitAll()
                 .and()
 	                .logout()
 	                .permitAll()
+                .and()
+                	.sessionManagement().invalidSessionUrl("/login?expier=true")
+                	.sessionFixation().newSession()
                 .and()
                 	.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
     }
@@ -76,6 +81,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
            .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
+        
     }
     
     @Bean

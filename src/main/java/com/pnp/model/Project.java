@@ -23,43 +23,36 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "project")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Role implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2339965031801382315L;
+public class Project implements Serializable  {
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name = "role_id")
-    private Long id;
+	private static final long serialVersionUID = -7285880476750121290L;
 	
-    private String name;
-   
-    @ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE}, mappedBy="userRoles")
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="project_id")
+	private Long id;
+	
+	private String projName;
+	
+	@ManyToMany(cascade=CascadeType.ALL, mappedBy="projectSet")
 	@JsonIgnore
+	private Set<Department> deptSet = new HashSet<>(0);
+	
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE}, mappedBy="userProj")
     private Set<User> userSet = new HashSet<User>();
-    
-    @Column(nullable = false, updatable = false)
+	
+	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
-     
-    public Role() {
-    }
- 
-    public Role(String name) {
-        this.name = name;
-    }
 
-    
-    public Long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -67,20 +60,12 @@ public class Role implements Serializable{
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getProjName() {
+		return projName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Set<User> getUserSet() {
-		return userSet;
-	}
-
-	public void setUserSet(Set<User> userSet) {
-		this.userSet = userSet;
+	public void setProjName(String projName) {
+		this.projName = projName;
 	}
 
 	public Date getCreatedAt() {
@@ -99,6 +84,22 @@ public class Role implements Serializable{
 		this.updatedAt = updatedAt;
 	}
 
+	public Set<Department> getDeptSet() {
+		return deptSet;
+	}
+
+	public void setDeptSet(Set<Department> deptSet) {
+		this.deptSet = deptSet;
+	}
+
+	public Set<User> getUserSet() {
+		return userSet;
+	}
+
+	public void setUserSet(Set<User> userSet) {
+		this.userSet = userSet;
+	}
+
 	@PrePersist
 	public void beforeUpdate(){
 		createdAt = new Date();
@@ -109,6 +110,4 @@ public class Role implements Serializable{
 	public void beforeAdd(){
 		updatedAt = new Date();
 	}
-    
- 
 }

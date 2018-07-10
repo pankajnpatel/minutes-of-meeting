@@ -19,6 +19,7 @@ Vue.use(VeeValidate);
 var vm = new Vue({
     el: '#app',
     data: {
+    	
     	request: {
     		meetingTopic: '',
     		meetingLocation: '',
@@ -33,15 +34,44 @@ var vm = new Vue({
         	sAttendee: '',
         	message: []
     	},
+    	orgDepartments: [],
         orgProject: 
         	[{'id':'1', 'dept':'JAVA', 'name':'T-Mobile Groovy'}, {'id':'1', 'dept':'JAVA', 'name': 'T-Mobile Backend'}, 
                    {'id':'1', 'dept':'PHP', 'name':'T-Mobile EPC Tool'}, {'id':'1', 'dept':'.NET', 'name':'T-Mobile PIER'}],
         orgAttendees: 
         	[{'id':'1', 'dept':'JAVA', 'project':'T-Mobile Groovy', 'name':'Pankaj'}, {'id':'1', 'dept':'JAVA', 'project':'T-Mobile Groovy', 'name':'Vinit'}, 
                    {'id':'1', 'dept':'PHP', 'project':'T-Mobile EPC Tool', 'name':'Navneet'}, {'id':'1', 'dept':'.NET', 'project': 'T-Mobile PIER', 'name':'Uttam'}],
+        allNoteTakers: [],
         attendees: [],
         projects: [],
         isExist: false
+    },
+    beforeMount(){
+    	var self = this;
+    	
+    	axios.get('/user/all')
+        .then(function (response) {
+        	self.allNoteTakers = response.data;
+        })
+        .catch(function (error) {
+            console.log(error.message);
+        });
+    	
+    	axios.get('/dept/all')
+        .then(function (response) {
+        	self.orgDepartments = response.data;
+        })
+        .catch(function (error) {
+            console.log(error.message);
+        });
+    	
+    	/*axios.get('/user/all')
+        .then(function (response) {
+        	self.orgAttendees = response.data;
+        })
+        .catch(function (error) {
+            console.log(error.message);
+        });*/
     },
     computed: {
     	isValidated : function(){
@@ -71,8 +101,8 @@ var vm = new Vue({
         'checkPresent' : function(event, index){
             console.info(this.request.message[index].present);
       	},
-      	'changeDepartment' : function(){
-      		var self = this;
+      	'changeDepartment' : function(e){
+      		/*var self = this;
       		self.projects = [];
       		self.attendees = [];
       		self.request.sProject = '';
@@ -82,7 +112,36 @@ var vm = new Vue({
       				self.request.sProject = item.name;
       				self.projects.push(item);
           		}
-      		});
+      		});*/
+      		
+      		var deptId = event.target.value;
+      		
+      		var self = this;
+      		self.projects = [];
+      		self.attendees = [];
+      		self.request.sProject = '';
+      		self.request.sAttendee = '';
+      		
+      		axios.get('/dept/'+ deptId +'/proj')
+            .then(function (response) {
+            	
+            	self.orgProject = response.data;
+            	console.info(self.orgProject)
+            	
+            	self.orgProject.forEach(function(item, index) {
+            		
+            		
+      				//self.request.sProject = item.projName;
+            		self.request.sProject = item.id;
+      				self.projects.push(item);
+      				
+      				console.info(self.request.sProject);
+      				
+          		});
+            })
+            .catch(function (error) {
+                console.log(error.message);
+            });
       	},
       	'changeProject' : function(){
       		var self = this;

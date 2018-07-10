@@ -47,7 +47,9 @@
 	                            </div>
 	                            <div class="col-md-6">
 	                             	<label for="noteTaker">Note Taker</label>
-	                            	<input type="text" name="noteTaker" id="noteTaker" class="form-control input-lg" placeholder="Note Taker" v-model="request.noteTaker" v-validate="{required: true, min: 6}"/>
+	                            	<select name="noteTaker" id="noteTaker" class="form-control input-lg" v-model="request.noteTaker" v-validate="{required: true}">
+	                            		<option v-for="noteTaker in allNoteTakers" v-bind:value="noteTaker.id">{{ noteTaker.firstName + " " + noteTaker.lastName }}</option>
+	                            	</select>
 	                            	<span class="error">{{ errors.first('noteTaker') }}</span>
 	                            </div>
                             </div>
@@ -110,20 +112,25 @@
                         	<div class="row">
                         		<div class="col-md-2" style="padding-bottom: 15px;">
                         			<label for="location">Department</label>
-	                            	<select class="form-control input-lg" v-model="request.sDepartment" @change="changeDepartment">
+	                            	<!-- <select class="form-control input-lg" v-model="request.sDepartment" @change="changeDepartment">
 	                            		<option value="JAVA">JAVA</option>
 	                            		<option value=".NET">.NET</option>
 	                            		<option value="PHP">PHP</option>
+	                            	</select> -->
+	                            	
+	                            	<select name="departments" id="departments" class="form-control input-lg" v-model="request.sDepartment" v-validate="{required: true}" @change="changeDepartment">
+	                            		<option v-for="department in orgDepartments" v-bind:value="department.id">{{ department.deptName }}</option>
 	                            	</select>
+	                            	<span class="error">{{ errors.first('departments') }}</span>
                         		</div>	
                         		<div class="col-md-4" style="padding-bottom: 15px;">	
-	                        			<label for="location">Project</label>
-	                        			<select class="form-control input-lg" v-model="request.sProject" @change="changeProject">
-		                            		<option v-for="project in projects" v-bind:value="project.name">{{ project.name }}</option>
-		                            	</select>
+                        			<label for="location">Project</label>
+                        			<select class="form-control input-lg" v-model="request.sProject" @change="changeProject">
+	                            		<option v-for="project in projects" v-bind:value="project.id">{{ project.projName }}</option>
+	                            	</select>
                             	</div>
                         		<div class="col-md-6" style="padding-bottom: 15px;">
-	                            	<div class="col-md-6" style="padding-bottom: 15px;">	
+	                            	<div class="col-md-6" style="padding-bottom: 15px;">
 	                        			<label for="location">Attendee</label>
 	                        			<select class="form-control input-lg" v-model="request.sAttendee">
 		                            		<option v-for="attendee in attendees" v-bind:value="attendee.name">{{ attendee.name }}</option>
