@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<div th:replace="fragments/header :: header-css" />
+</head>
+<body>
+
+	<div th:replace="fragments/header :: header" />
+
+	<div class="container">
+		<h1 th:inline="text">Welcome, [[${#httpServletRequest.remoteUser}]]!</h1>
+		<div class="col-md-12">
+			<a th:href="@{/admin/create-mom}" class="btn btn-default pull-right">Add</a>
+		</div>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>USERNAME</th>
+					<th>EMAIL</th>
+					<th>ROLE</th>
+					<th>ACTION</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="user : ${userList}">
+					<td th:text="${user.username}">John</td>
+					<td th:text="${user.email}">Doe</td>
+
+					<td th:each="role :${user.userRoles}">
+						<div th:text="${role.role.name}"></div>
+					</td>
+					<td>john@example.com</td>
+				</tr>
+
+			</tbody>
+		</table>
+
+		<p th:text="${role}">Test</p>
+		<div class="starter-template">
+			<h1>User page (Spring Security protected)</h1>
+
+			<h1 th:inline="text">Hello
+				[[${#httpServletRequest.remoteUser}]]!</h1>
+			<form th:action="@{/logout}" method="post">
+				<input type="submit" value="Sign Out" />
+			</form>
+
+		</div>
+
+	</div>
+	<!-- /.container -->
+	<div th:replace="fragments/footer :: footer" />
+
+</body>
+</html>

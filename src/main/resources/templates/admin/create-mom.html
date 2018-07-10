@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create MoM</title>
+    <div th:replace="fragments/header :: header-css"/>
+    <style type="text/css">
+    	td, th{
+    		border: #d1d1d1 solid 1px;
+    	}
+    	.error{
+    		font-size: 15px;
+    		color: red;
+    	}
+    </style>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/>
+
+<div class="container" id="app">
+	<div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <div class="login-box well">
+                    <form th:action="@{/login}" method="post">
+                        <legend>Minutes of Meeting</legend>
+                        <div class="form-group">
+                        	<div class="row">
+                        		<div class="col-md-12">
+		                         	<div class="col-md-12" style="background-color: #337ab7; color: #fff; height: 30px; padding: 5px; font-size: 14px; font-weight: bold;">
+		                         		SUMMARY
+		                         	</div>
+	                         	</div>
+	                         </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="meetingTopic">Meeting Topic</label>
+                            <input type="text" name="meetingTopic" id="meetingTopic" class="form-control input-lg"  placeholder="Meeting Topic" v-model="request.meetingTopic" v-validate="{required: true, min: 6}" autofocus="true"/>
+                            <span class="error">{{ errors.first('meetingTopic') }}</span>
+                        </div>
+                        <div class="form-group">
+                        	<div class="row">
+	                         	<div class="col-md-6">
+	                            	<label for="location">Meeting Location</label>
+	                            	<input type="text" name="location" id="location" class="form-control input-lg" placeholder="Meeting Location" v-model="request.meetingLocation" v-validate="{required: true, min: 6}"/>
+	                            	<span class="error">{{ errors.first('location') }}</span>
+	                            </div>
+	                            <div class="col-md-6">
+	                             	<label for="noteTaker">Note Taker</label>
+	                            	<input type="text" name="noteTaker" id="noteTaker" class="form-control input-lg" placeholder="Note Taker" v-model="request.noteTaker" v-validate="{required: true, min: 6}"/>
+	                            	<span class="error">{{ errors.first('noteTaker') }}</span>
+	                            </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+	                        <div class="row">
+	                        	<div class="col-md-3">
+	                            	<label for="fromDate">From Date</label>
+	                            	<!-- { required: true, regex: /\\.(js|ts)$/ } -->
+	                            	<input type="date" name="fromDate" id="fromDate" class="form-control input-lg" placeholder="MM/DD/YYYY" v-model="request.fromDate" v-validate="{required: true, date_format: 'hh:mm A'}"/>
+	                            	<span class="error">{{ errors.first('fromDate') }}</span>
+	                            </div>
+	                            <div class="col-md-3">
+	                            	<label for="toDate">To Date</label>
+	                            	<input type="date" name="toDate" id="toDate" class="form-control input-lg" placeholder="MM/DD/YYYY" v-model="request.toDate" v-validate="{date_format: 'dd/MM/yyyy' }"/>
+	                            	<span class="error">{{ errors.first('toDate') }}</span>
+	                            </div>
+	                         	<div class="col-md-3">
+	                            	<label for="fromTime">From</label>
+	                            	<input type="time" name="fromTime" id="fromTime" class="form-control input-lg" placeholder="HH:MM AM/PM" v-model="request.fromTime" v-validate="{ required: true, date_format: 'hh:mm A' }"/>
+	                            	<span class="error">{{ errors.first('fromTime') }}</span>
+	                            </div>
+	                            <div class="col-md-3">
+	                             	<label for="toTime">To</label>
+	                            	<input type="time" name="toTime" id="toTime" class="form-control input-lg" placeholder="HH:MM AM/PM" v-model="request.toTime" v-validate="{ required: true, date_format: 'hh:mm A' }"/>
+	                            	<span class="error">{{ errors.first('toTime') }}</span>
+	                            </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                        	<hr/>
+                        </div>
+                        <div class="form-group">
+                        	<div class="row">
+	                        	<div class="col-md-12">	
+		                         	<div class="col-md-12" style="background-color: #337ab7; color: #fff; height: 30px; padding: 5px; font-size: 14px; font-weight: bold;">
+		                         		AGENDA
+		                         	</div>
+		                         </div>
+	                         </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="topics">Topics</label>
+                            <textarea name="topics" id="topics" rows="5" class="form-control input-lg" style="resize: vertical;" placeholder="Meeting Topics" v-model="request.topics" v-validate="{required: true, min: 6}"></textarea>
+                        	<span class="error">{{ errors.first('topics') }}</span>
+                        </div>
+                        <div class="form-group">
+                        	<hr/>
+                        </div>
+                        <div class="form-group">
+                        	<div class="row">
+                        		<div class="col-md-12">	
+		                         	<div class="col-md-12" style="background-color: #337ab7; color: #fff; height: 30px; padding: 5px; font-size: 14px; font-weight: bold;">
+		                         		ATTENDEE LIST
+		                         	</div>
+	                         	</div>
+                         	</div>
+                        </div>
+                        <div class="form-group">
+                        	<div class="row">
+                        		<div class="col-md-2" style="padding-bottom: 15px;">
+                        			<label for="location">Department</label>
+	                            	<select class="form-control input-lg" v-model="request.sDepartment" @change="changeDepartment">
+	                            		<option value="JAVA">JAVA</option>
+	                            		<option value=".NET">.NET</option>
+	                            		<option value="PHP">PHP</option>
+	                            	</select>
+                        		</div>	
+                        		<div class="col-md-4" style="padding-bottom: 15px;">	
+	                        			<label for="location">Project</label>
+	                        			<select class="form-control input-lg" v-model="request.sProject" @change="changeProject">
+		                            		<option v-for="project in projects" v-bind:value="project.name">{{ project.name }}</option>
+		                            	</select>
+                            	</div>
+                        		<div class="col-md-6" style="padding-bottom: 15px;">
+	                            	<div class="col-md-6" style="padding-bottom: 15px;">	
+	                        			<label for="location">Attendee</label>
+	                        			<select class="form-control input-lg" v-model="request.sAttendee">
+		                            		<option v-for="attendee in attendees" v-bind:value="attendee.name">{{ attendee.name }}</option>
+		                            	</select>
+	                            	</div>
+	                            	<div class="col-md-6" style="padding-bottom: 15px; padding-right: 0px;">	
+	                            		<label for="location"></label>	
+	                            		<button type="button" class="btn btn-lg btn-primary btn-block m-t-md" value="Add" @click="addAttendee" :disabled="!request.sDepartment || !request.sProject || !request.sAttendee">ADD</button>
+	                            	</div>
+	                         	</div>
+	                         	<div class="col-md-12">
+	                         		<span class="error" v-if="isExist">User {{request.sAttendee}} already exist!</span>	
+	                         		<table style="width: 100%;">
+	                         			<thead>
+	                         				<tr style="height: 40px;">
+	                         					<th class="text-center" style="width: 5%;">#</th>
+	                         					<th class="text-center" style="width: 30%;">Name</th>
+	                         					<th class="text-center" style="width: 10%;">Present</th>
+	                         					<th class="text-center" style="width: 45%;">Absence Reason</th>
+	                         					<th class="text-center" style="width: 10%;">Action</th>
+	                         				</tr>
+	                         			</thead>
+	                         			<tbody>
+	                         				<tr style="height: 40px;" v-for="(msg, index) in request.message">
+	                         					<td style="padding-left: 5px;">{{index + 1}}</td>
+	                         					<td style="padding-left: 5px;">{{msg.name}}</td>
+	                         					<td style="padding-left: 5px; text-align: center;">
+	                         						<input type="checkbox" v-model="msg.present" @click="checkPresent($event, index)" />
+	                         					</td>
+	                         					<td style="padding-left: 5px;">
+	                         						<input v-if="msg.present != true" type="text" style="width: 99%;"/>
+	                         						<label v-if="msg.present == true">{{msg.reason}}</label>
+	                         					</td>
+	                         					<td style="text-align: center;">
+	                         						<span class="glyphicon glyphicon-trash" style="cursor: pointer;" @click="removeAttendee(index)"></span>
+	                         					</td>
+	                         				</tr>
+	                         			</tbody>
+	                         		</table>
+	                         	</div>
+                         	</div>
+                        </div>
+                        <div class="form-group">
+                           <button type="button" class="btn btn-lg btn-primary btn-block m-t-md" value="CREATE MOM" v-bind:disabled="errors.any() || !isValidated" @click="createMoM">CREATE MOM</button>
+                        </div>
+                    </form>
+                
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+<script type="text/javascript" th:src="@{/resources/js/create-mom.js}"></script>
+</body>
+</html>

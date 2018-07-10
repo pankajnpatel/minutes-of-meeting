@@ -1,0 +1,23 @@
+h1{
+	color:#0000FF;
+}
+
+h2{
+	color:#FF0000;
+}
+
+footer{
+    margin-top:60px;
+}
+
+.well.login-box {
+    /* width: 400px; */
+    border: #d1d1d1 solid 1px;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+.well {
+    background-color: #fff!important;
+    border-radius: 0!important;
+    border: black solid 1px;
+}
