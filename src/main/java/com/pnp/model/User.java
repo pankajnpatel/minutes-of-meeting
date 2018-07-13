@@ -22,7 +22,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 /**
  * Created by Agus Suhardi on 22-Jun-17.
@@ -33,7 +36,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class User implements Serializable{
 
 	private static final long serialVersionUID = -5842495551740395062L;
-
+	
+	public User() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public User(Long id) {
+		// TODO Auto-generated constructor stub
+		this.id = id;
+	}
+	
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "user_id")
@@ -55,20 +67,22 @@ public class User implements Serializable{
     private String email;
     
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "meetingTaker")
+    @JsonProperty(access = Access.WRITE_ONLY)
     private Set<Meeting> meeting = new HashSet<Meeting>();
     
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE},mappedBy = "user")
+    @JsonIgnore
     private Set<UserMeeting> userMeeting = new HashSet<UserMeeting>();
     
-    @ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})  
+    @ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE})  
     @JoinTable(name="user_roles", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))  
     private Set<Role> userRoles = new HashSet<Role>();
     
-	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})   
+	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE})   
     @JoinTable(name="user_departments", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="dept_id"))
     private Set<Department> userDept = new HashSet<Department>();
 	
-	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})  
+	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE})  
     @JoinTable(name="user_projects", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="project_id"))  
     private Set<Project> userProj = new HashSet<Project>();
     
@@ -195,7 +209,5 @@ public class User implements Serializable{
 	public void beforeAdd(){
 		updatedAt = new Date();
 	}
-    
-
-   
+ 
 }

@@ -1,5 +1,6 @@
 package com.pnp.exception;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,13 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
         request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+  }
+  
+  @ExceptionHandler(AccessDeniedException.class)
+  public final ResponseEntity<ErrorDetails> handleAcessDeniedException(NotFoundException ex, WebRequest request) {
+    ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
+        request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
   }
 
 }

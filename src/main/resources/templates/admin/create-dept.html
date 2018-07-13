@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Meeting List</title>
+    <title>Create MoM</title>
     <div th:replace="fragments/header :: header-css"/>
     <style type="text/css">
     	td, th{
@@ -23,59 +23,61 @@
         <div class="col-md-10">
             <div class="login-box well">
                     <form th:action="@{/login}" method="post">
-                        <legend>Minutes of Meeting</legend>
-
+                        <legend>Department</legend>
                         <div class="form-group">
-                        	<hr/>
+                        	<div class="row">
+                        		<div class="col-md-12">
+		                         	<div class="col-md-12" style="background-color: #337ab7; color: #fff; height: 30px; padding: 5px; font-size: 14px; font-weight: bold;">
+		                         		Add Department
+		                         	</div>
+	                         	</div>
+	                         </div>
                         </div>
+                        <div class="form-group">
+							<div class="row">
+								<div class="col-md-6">
+									<label for="deptName">Department Name</label>
+									<input type="text" name="deptName" id="deptName" class="form-control input-lg"  placeholder="Department Name" v-model="request.deptName" v-validate="{required: true, min: 2}" autofocus="true"/>
+								</div>
+								<div class="col-md-6">
+								<label for="deptName">&nbsp;</label>
+									<button type="button" class="btn btn-lg btn-primary btn-block m-t-md" value="ADD DEPT" v-bind:disabled="errors.any() || !isValidated" @click="createDept">ADD</button>
+								</div>
+								<span class="error">{{ errors.first('deptName') }}</span>
+							</div>
+                        </div>
+                         
+
                         <div class="form-group">
                         	<div class="row">
                         		<div class="col-md-12">	
 		                         	<div class="col-md-12" style="background-color: #337ab7; color: #fff; height: 30px; padding: 5px; font-size: 14px; font-weight: bold;">
-		                         		MEETING TEPLATE
+		                         		DEPARTMENT LIST
 		                         	</div>
 	                         	</div>
                          	</div>
                         </div>
                         <div class="form-group">
                         	<div class="row">
-                        		
-	                         	<div class="col-md-12">
-	                         		<span class="error" v-if="isExist">User {{request.sAttendee.firstName}} already exist!</span>	
+                        		<div class="col-md-12" v-if="deptList.length==0">No Data Found</div>
+	                         	<div class="col-md-12"  v-if="deptList.length>0">
+	                         		<span class="error" v-if="isExist">Department {{request.deptName}} already exist!</span>	
 	                         		<table style="width: 100%;">
 	                         			<thead>
 	                         				<tr style="height: 40px;">
 	                         					<th class="text-center" style="width: 5%;">#</th>
-	                         					<th class="text-center" style="width: 10%;">Title</th>
-	                         					<th class="text-center" style="width: 10%;">Agenda</th>
-	                         					<th class="text-center" style="width: 10%;">From</th>
-	                         					<th class="text-center" style="width: 10%;">To</th>
-	                         					<th class="text-center" style="width: 10%;">Department</th>
-	                         					<th class="text-center" style="width: 10%;">Project</th>
+	                         					<th class="text-center" style="width: 30%;">Department</th>
 	                         					<th class="text-center" style="width: 10%;">Action</th>
 	                         				</tr>
 	                         			</thead>
 	                         			<tbody>
-	                         				<tr style="height: 40px;" v-for="(meeting, index) in meetingList">
+	                         				<tr style="height: 40px;" v-for="(dept, index) in deptList">
 	                         					<td style="padding-left: 5px;">{{index + 1}}</td>
-	                         					<td style="padding-left: 5px;">{{meeting.title}}</td>
-	                         					<td style="padding-left: 5px;">{{meeting.agenda}}</td>
-	                         					<td style="padding-left: 5px;">
-	                         						{{meeting.fromDate}}
-	                         					</td>
-	                         					<td style="padding-left: 5px;">
-	                         						{{meeting.toDate}}
-	                         					</td>
-	                         					<td style="padding-left: 5px;">
-	                         						<span v-for="(dept, index) in meeting.meetingDept">{{dept.deptName}}</span>
-	                         					</td>
-	                         					<td style="padding-left: 5px;">
-	                         						<span v-for="(proj, index) in meeting.meetingProj">{{proj.projName}}</span>
-	                         					</td>
+	                         					<td style="padding-left: 5px;">{{dept.deptName}}</td>
 	                         					
 	                         					<td style="text-align: center;">
-	                         						<span class="glyphicon glyphicon-pencil" style="cursor: pointer;" @click="editMeeting(index)"></span>
-	                         						<span class="glyphicon glyphicon-trash" style="cursor: pointer;" @click="deleteMeeting(index)"></span>
+	                         						<span class="glyphicon glyphicon-pencil" style="cursor: pointer;" @click="editDept(index)"></span>
+	                         						<span class="glyphicon glyphicon-trash" style="cursor: pointer;" @click="removeDept(index)"></span>
 	                         					</td>
 	                         				</tr>
 	                         			</tbody>
@@ -83,7 +85,7 @@
 	                         	</div>
                          	</div>
                         </div>
-                        
+                       
                     </form>
                 
             </div>
@@ -93,6 +95,6 @@
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
-<script type="text/javascript" th:src="@{/resources/js/dashboard.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/department.js}"></script>
 </body>
 </html>

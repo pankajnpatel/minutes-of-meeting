@@ -22,8 +22,11 @@
         <div class="col-md-1"></div>
         <div class="col-md-10">
             <div class="login-box well">
-                    <form th:action="@{/login}" method="post">
+                    <form action="#" th:action="@{/login}" method="post">
+                    	
+                    	<input type ="hidden" id = "meetingId"  name = "id"  th:value="${meetingId}"/>
                         <legend>Minutes of Meeting</legend>
+
                         <div class="form-group">
                         	<div class="row">
                         		<div class="col-md-12">
@@ -34,23 +37,23 @@
 	                         </div>
                         </div>
                         <div class="form-group">
-                            <label for="meetingTopic">Meeting Topic</label>
-                            <input type="text" name="meetingTopic" id="meetingTopic" class="form-control input-lg"  placeholder="Meeting Topic" v-model="request.meetingTopic" v-validate="{required: true, min: 6}" autofocus="true"/>
-                            <span class="error">{{ errors.first('meetingTopic') }}</span>
+                            <label for="title">Meeting Topic</label>
+                            <input type="text" name="title" id="title" class="form-control input-lg"  placeholder="Meeting Topic" v-model="request.title" v-validate="{required: true, min: 6}" autofocus="true"/>
+                            <span class="error">{{ errors.first('title') }}</span>
                         </div>
                         <div class="form-group">
                         	<div class="row">
 	                         	<div class="col-md-6">
 	                            	<label for="location">Meeting Location</label>
-	                            	<input type="text" name="location" id="location" class="form-control input-lg" placeholder="Meeting Location" v-model="request.meetingLocation" v-validate="{required: true, min: 6}"/>
+	                            	<input type="text" name="location" id="location" class="form-control input-lg" placeholder="Meeting Location" v-model="request.location" v-validate="{required: true, min: 6}"/>
 	                            	<span class="error">{{ errors.first('location') }}</span>
 	                            </div>
 	                            <div class="col-md-6">
-	                             	<label for="noteTaker">Note Taker</label>
-	                            	<select name="noteTaker" id="noteTaker" class="form-control input-lg" v-model="request.noteTaker" v-validate="{required: true}">
-	                            		<option v-for="noteTaker in allNoteTakers" v-bind:value="noteTaker.id">{{ noteTaker.firstName + " " + noteTaker.lastName }}</option>
+	                             	<label for="meetingTaker">Note Taker</label>
+	                            	<select name="meetingTaker" id="meetingTaker" class="form-control input-lg" v-model="request.meetingTaker" v-validate="{required: true}">
+	                            		<option v-for="meetingTaker in allMeetingTakers" v-bind:value="meetingTaker.id">{{ meetingTaker.firstName + " " + meetingTaker.lastName }}</option>
 	                            	</select>
-	                            	<span class="error">{{ errors.first('noteTaker') }}</span>
+	                            	<span class="error">{{ errors.first('meetingTaker') }}</span>
 	                            </div>
                             </div>
                         </div>
@@ -86,15 +89,15 @@
                         	<div class="row">
 	                        	<div class="col-md-12">	
 		                         	<div class="col-md-12" style="background-color: #337ab7; color: #fff; height: 30px; padding: 5px; font-size: 14px; font-weight: bold;">
-		                         		AGENDA
+		                         		agenda
 		                         	</div>
 		                         </div>
 	                         </div>
                         </div>
                         <div class="form-group">
-                            <label for="topics">Topics</label>
-                            <textarea name="topics" id="topics" rows="5" class="form-control input-lg" style="resize: vertical;" placeholder="Meeting Topics" v-model="request.topics" v-validate="{required: true, min: 6}"></textarea>
-                        	<span class="error">{{ errors.first('topics') }}</span>
+                            <label for="agenda">Topics</label>
+                            <textarea name="agenda" id="agenda" rows="5" class="form-control input-lg" style="resize: vertical;" placeholder="Meeting Topics" v-model="request.agenda" v-validate="{required: true, min: 6}"></textarea>
+                        	<span class="error">{{ errors.first('agenda') }}</span>
                         </div>
                         <div class="form-group">
                         	<hr/>
@@ -133,16 +136,17 @@
 	                            	<div class="col-md-6" style="padding-bottom: 15px;">
 	                        			<label for="location">Attendee</label>
 	                        			<select class="form-control input-lg" v-model="request.sAttendee">
-		                            		<option v-for="attendee in attendees" v-bind:value="attendee.name">{{ attendee.name }}</option>
+		                            		<option v-for="attendee in attendees" v-bind:value="attendee">{{ attendee.firstName }}</option>
 		                            	</select>
 	                            	</div>
 	                            	<div class="col-md-6" style="padding-bottom: 15px; padding-right: 0px;">	
 	                            		<label for="location"></label>	
-	                            		<button type="button" class="btn btn-lg btn-primary btn-block m-t-md" value="Add" @click="addAttendee" :disabled="!request.sDepartment || !request.sProject || !request.sAttendee">ADD</button>
+	                            		<!--  <button type="button" class="btn btn-lg btn-primary btn-block m-t-md" value="Add" @click="addAttendee" :disabled="!request.sDepartment || !request.sProject || !request.sAttendee">ADD</button>-->
+	                            		<button type="button" class="btn btn-lg btn-primary btn-block m-t-md" value="Add" @click="addAttendee" :disabled="!request.sDepartment || !request.sProject ">ADD</button>
 	                            	</div>
 	                         	</div>
 	                         	<div class="col-md-12">
-	                         		<span class="error" v-if="isExist">User {{request.sAttendee}} already exist!</span>	
+	                         		<span class="error" v-if="isExist">User {{request.sAttendee.firstName}} already exist!</span>	
 	                         		<table style="width: 100%;">
 	                         			<thead>
 	                         				<tr style="height: 40px;">
@@ -154,9 +158,9 @@
 	                         				</tr>
 	                         			</thead>
 	                         			<tbody>
-	                         				<tr style="height: 40px;" v-for="(msg, index) in request.message">
+	                         				<tr style="height: 40px;" v-for="(msg, index) in request.userMeeting">
 	                         					<td style="padding-left: 5px;">{{index + 1}}</td>
-	                         					<td style="padding-left: 5px;">{{msg.name}}</td>
+	                         					<td style="padding-left: 5px;">{{msg.attendeeName}}</td>
 	                         					<td style="padding-left: 5px; text-align: center;">
 	                         						<input type="checkbox" v-model="msg.present" @click="checkPresent($event, index)" />
 	                         					</td>
@@ -174,7 +178,8 @@
                          	</div>
                         </div>
                         <div class="form-group">
-                           <button type="button" class="btn btn-lg btn-primary btn-block m-t-md" value="CREATE MOM" v-bind:disabled="errors.any() || !isValidated" @click="createMoM">CREATE MOM</button>
+                           <!-- <button type="button" class="btn btn-lg btn-primary btn-block m-t-md" value="CREATE MOM" v-bind:disabled="errors.any() || !isValidated" @click="createMoM">CREATE MOM</button> -->
+                        	<button type="button" class="btn btn-lg btn-primary btn-block m-t-md" value="CREATE MOM" v-bind:disabled="errors.any() || !isValidated" @click="createMoM">CREATE MOM</button>
                         </div>
                     </form>
                 

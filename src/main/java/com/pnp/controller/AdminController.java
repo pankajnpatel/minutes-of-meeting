@@ -10,5 +10,10 @@ public class AdminController {
 	public String viewMOM() {
 		return "admin/create-mom";
 	}
+	
+	@GetMapping("/admin/create-dept")
+	public String viewDepartment() {
+		return "admin/create-dept";
+	}
 
 }

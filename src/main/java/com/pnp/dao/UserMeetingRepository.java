@@ -8,5 +8,5 @@ public interface UserMeetingRepository extends JpaRepository<UserMeeting, Long>{
 	
 	List<UserMeeting> findByUserId(Long id);
 	UserMeeting findByIdAndUserId(Long id , Long userId);
-		
+	
 }

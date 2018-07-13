@@ -3,6 +3,7 @@ package com.pnp.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +37,7 @@ public class UserMeeting implements Serializable{
 	@JoinColumn(name="meeting_id")
 	private Meeting meeting;
 	
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.MERGE})
 	@JoinColumn(name="user_id")
 	private User user;
 	
@@ -54,6 +55,11 @@ public class UserMeeting implements Serializable{
 	@Column(columnDefinition="TEXT")
 	private String nextDesc;
 	
+	@Column(name="ispresent")
+	private Boolean isPresent;
+	
+	@Column(name="reason")
+	private String reason;
 
 	@Column(nullable = false, updatable = false)
    	@Temporal(TemporalType.TIMESTAMP)
@@ -134,6 +140,23 @@ public class UserMeeting implements Serializable{
 
 	public void setmDate(Date mDate) {
 		this.mDate = mDate;
+	}
+
+	
+	public Boolean getIsPresent() {
+		return isPresent;
+	}
+
+	public void setIsPresent(Boolean isPresent) {
+		this.isPresent = isPresent;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 	@PrePersist

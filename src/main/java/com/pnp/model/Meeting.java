@@ -13,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
@@ -20,6 +22,9 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,14 +52,20 @@ public class Meeting  implements Serializable{
 	
 	private String location;
 	
-	@ManyToOne(fetch=FetchType.LAZY ,cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
+	@ManyToOne(fetch=FetchType.LAZY ,cascade = {CascadeType.MERGE} )
 	@JoinColumn(name="user_id", nullable=false)
-	@JsonProperty(access = Access.WRITE_ONLY)
 	private User meetingTaker;
 	
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "user",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    @JsonProperty(access = Access.WRITE_ONLY)
 	private Set<UserMeeting> userMeetingSet = new HashSet<UserMeeting>();
+	
+	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.MERGE})  
+    @JoinTable(name="meeting_dept", joinColumns=@JoinColumn(name="meeting_id"), inverseJoinColumns=@JoinColumn(name="dept_id"))  
+    private Set<Department> meetingDept = new HashSet<Department>();
+	
+	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.MERGE})  
+    @JoinTable(name="meeting_proj", joinColumns=@JoinColumn(name="meeting_id"), inverseJoinColumns=@JoinColumn(name="project_id"))  
+    private Set<Project> meetingProj = new HashSet<Project>();
 
 	@Column(name = "from_dt",nullable = false)
 	@Temporal(TemporalType.DATE) 
@@ -66,11 +77,11 @@ public class Meeting  implements Serializable{
 
     @Temporal(TemporalType.TIME)
     @Column(name = "start_time")
-	private Date startTime;
+	private Date fromTime;
 	
     @Temporal(TemporalType.TIME)
     @Column(name = "end_time")
-	private Date endTime;
+	private Date toTime;
 	
 	
 	@Column(nullable = false, updatable = false)
@@ -162,23 +173,38 @@ public class Meeting  implements Serializable{
 		this.toDate = toDate;
 	}
 
-	public Date getStartTime() {
-		return startTime;
+	public Date getFromTime() {
+		return fromTime;
 	}
 
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
+	public void setFromTime(Date fromTime) {
+		this.fromTime = fromTime;
 	}
 
-	public Date getEndTime() {
-		return endTime;
+	public Date getToTime() {
+		return toTime;
 	}
 
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
+	public void setToTime(Date toTime) {
+		this.toTime = toTime;
 	}
 
-	
+	public Set<Department> getMeetingDept() {
+		return meetingDept;
+	}
+
+	public void setMeetingDept(Set<Department> meetingDept) {
+		this.meetingDept = meetingDept;
+	}
+
+	public Set<Project> getMeetingProj() {
+		return meetingProj;
+	}
+
+	public void setMeetingProj(Set<Project> meetingProj) {
+		this.meetingProj = meetingProj;
+	}
+
 	@PrePersist
 	public void beforeUpdate(){
 		createdAt = new Date();

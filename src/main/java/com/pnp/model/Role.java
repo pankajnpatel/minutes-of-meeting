@@ -39,7 +39,7 @@ public class Role implements Serializable{
 	
     private String name;
    
-    @ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE}, mappedBy="userRoles")
+    @ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE}, mappedBy="userRoles")
 	@JsonIgnore
     private Set<User> userSet = new HashSet<User>();
     

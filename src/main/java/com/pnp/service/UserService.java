@@ -1,4 +1,4 @@
-package com.mkyong.service;
+package com.pnp.service;
 
 public interface UserService {
 

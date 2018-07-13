@@ -20,6 +20,7 @@ import com.pnp.dao.RoleRepository;
 import com.pnp.dao.UserMeetingRepository;
 import com.pnp.dao.UserRepository;
 import com.pnp.model.Department;
+import com.pnp.model.Meeting;
 import com.pnp.model.Project;
 import com.pnp.model.Role;
 import com.pnp.model.User;
@@ -94,5 +95,31 @@ public class UserController {
 		List<Role> roleList = userRepo.findRolesByUserId(id);
 		return new ResponseEntity<List<Role>>(roleList,HttpStatus.OK);
 	}
-
+	
+	@GetMapping("/user/{id}/meeting")
+	public ResponseEntity<List<Meeting>> getUserMeetings(@PathVariable("id") Long id) {
+		List<Meeting> meetingList = userRepo.findMeetingByUserId(id);
+		return new ResponseEntity<List<Meeting>>(meetingList,HttpStatus.OK);
+	}
+	
+	@GetMapping("/dept/{deptId}/proj/{projId}")
+	public ResponseEntity<List<User>> getUserMeetings(@PathVariable("deptId") Long deptId , @PathVariable("projId") Long projId) {
+		List<User> userList = null;
+		
+		if( deptId != 0 && projId != 0 ){
+			userList = userRepo.findUserByProjectIdAndDeptmentId(deptId,projId);
+		}else if(deptId != 0){
+			userList = userRepo.findUserByDeptmentId(deptId);
+		}else if(projId != 0){
+			userList = userRepo.findUserByProjectId(projId);
+		}
+		
+		return new ResponseEntity<List<User>>(userList,HttpStatus.OK);
+	}
+	
+	@GetMapping("/user-taker/{id}/meeting")
+	public ResponseEntity<List<Meeting>> getMeetingTkrMeetings(@PathVariable("id") Long id) {
+		List<Meeting> meetingList = userRepo.findMeetingByMeetingTkr(id);
+		return new ResponseEntity<List<Meeting>>(meetingList,HttpStatus.OK);
+	}
 }

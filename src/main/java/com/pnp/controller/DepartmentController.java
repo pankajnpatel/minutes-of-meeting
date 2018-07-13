@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pnp.dao.DepartmentRepository;
 import com.pnp.model.Department;
 import com.pnp.model.Project;
+import com.pnp.model.User;
 
 @RestController
 public class DepartmentController {
@@ -57,6 +58,12 @@ public class DepartmentController {
 	public ResponseEntity<Department> updateDepartment(@RequestBody Department department) {
 		department = deptRepo.save(department);
 		return new ResponseEntity<Department>(department, HttpStatus.OK);
+	}
+	
+	@GetMapping("/dept/{id}/user")
+	public ResponseEntity<List<User>> getDepartmentUsers(@PathVariable("id") Long id){
+		List<User> userList = deptRepo.findUsersByDepartmen(id);
+		return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
 	}
 
 }

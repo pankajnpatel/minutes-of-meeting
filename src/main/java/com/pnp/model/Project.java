@@ -21,6 +21,8 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 @Table(name = "project")
@@ -28,7 +30,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Project implements Serializable  {
 
 	private static final long serialVersionUID = -7285880476750121290L;
-	
+
+	public Project() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Project(Long id) {
+		this.id = id;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="project_id")
@@ -36,13 +46,17 @@ public class Project implements Serializable  {
 	
 	private String projName;
 	
-	@ManyToMany(cascade=CascadeType.ALL, mappedBy="projectSet")
-	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY , cascade={CascadeType.PERSIST,CascadeType.MERGE}, mappedBy="projectSet")
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private Set<Department> deptSet = new HashSet<>(0);
 	
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE}, mappedBy="userProj")
+	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE}, mappedBy="userProj")
     private Set<User> userSet = new HashSet<User>();
+	
+	@ManyToMany(fetch = FetchType.LAZY , cascade={CascadeType.PERSIST,CascadeType.MERGE}, mappedBy="meetingProj")
+	@JsonProperty(access = Access.WRITE_ONLY)
+	private Set<Meeting> meetingSet = new HashSet<>(0);
 	
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)

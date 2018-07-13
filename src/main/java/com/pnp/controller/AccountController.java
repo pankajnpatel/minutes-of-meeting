@@ -1,6 +1,5 @@
 package com.pnp.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,26 +23,17 @@ public class AccountController {
     @PostMapping("/login-success")
     public String loginSuccess(ModelMap model) {
     	
-    	//List<User> userList = new ArrayList<User>();
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	
     	boolean isAdmin = authentication.getAuthorities().stream().anyMatch( auth -> {
     		return auth.getAuthority().trim().equals("SUPER_ADMIN") || auth.getAuthority().trim().equals("TEAM_ADMIN");
     	});
-    	/*
-    	if(isAdmin){
-    		userList = userRepo.findAll();
-			userList.get(0).getUserRoles().toArray();
-    		model.addAttribute("user_list", userList);
-    	}
-    	*/
         return isAdmin? "admin/admin-dashboard" : "user/user-dashboard";
     }
     
     @GetMapping("/dashboard")
     public String dashboard(ModelMap model) {
     	
-    	List<User> userList = new ArrayList<User>();
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	
     	boolean isAdmin = authentication.getAuthorities().stream().anyMatch( auth -> {
@@ -51,7 +41,7 @@ public class AccountController {
     	});
     	
     	if(isAdmin){
-    		userList = userRepo.findAll();
+    		List<User> userList = userRepo.findAll();
 			userList.get(0).getUserRoles().toArray();
     		model.addAttribute("user_list", userList);
     	}

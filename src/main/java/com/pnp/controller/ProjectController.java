@@ -17,6 +17,7 @@ import com.pnp.dao.DepartmentRepository;
 import com.pnp.dao.ProjectRepository;
 import com.pnp.model.Department;
 import com.pnp.model.Project;
+import com.pnp.model.User;
 
 @RestController
 public class ProjectController {
@@ -69,6 +70,12 @@ public class ProjectController {
 	public ResponseEntity<String> deleteProject(@PathVariable Long id){
 		projectRepo.deleteById(id);
 		return new ResponseEntity<String>("Project deleted successfully",HttpStatus.OK);
+	}
+	
+	@GetMapping("/proj/{id}/user")
+	public ResponseEntity<List<User>> getDepartmentUsers(@PathVariable("id") Long id){
+		List<User> userList = projectRepo.findUsersByProjectId(id);
+		return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
 	}
 
 }

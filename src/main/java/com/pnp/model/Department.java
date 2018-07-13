@@ -34,6 +34,13 @@ public class Department implements Serializable{
 	 */
 	private static final long serialVersionUID = -1225798697004946550L;
 
+	public Department() {
+
+	}
+	public Department(Long id) {
+		this.id = id;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="dept_id")
@@ -42,12 +49,16 @@ public class Department implements Serializable{
 	private String deptName;
 	
  
-	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE}, mappedBy="userDept")
+	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE}, mappedBy="userDept")
 	@JsonIgnore
 	private Set<User> userSet = new HashSet<User>(0);
+	
+	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE}, mappedBy="meetingDept")
+	@JsonIgnore
+	private Set<Meeting> meetingSet = new HashSet<Meeting>(0);
 
 	
-	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})  
+	@ManyToMany(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST,CascadeType.MERGE})  
     @JoinTable(name="department_projects", joinColumns=@JoinColumn(name="dept_id"), inverseJoinColumns=@JoinColumn(name="project_id"))  
 	private Set<Project> projectSet = new HashSet<Project>(0);
 
